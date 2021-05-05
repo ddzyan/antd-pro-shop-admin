@@ -3,7 +3,7 @@ import type { Effect, Reducer } from 'umi';
 import { queryCurrent, query as queryUsers } from '@/services/user';
 
 export type CurrentUser = {
-  avatar?: string;
+  avatar_url?: string;
   name?: string;
   title?: string;
   group?: string;
@@ -12,7 +12,7 @@ export type CurrentUser = {
     key: string;
     label: string;
   }[];
-  userid?: string;
+  id?: number;
   unreadCount?: number;
 };
 
@@ -49,10 +49,19 @@ const UserModel: UserModelType = {
       });
     },
     *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
+      // 不存在则返回null
+      let userInfo = JSON.parse(localStorage.getItem('user_info') as string);
+      console.log('userInfo', userInfo);
+      // TODO 返回值错误，需要进行修改
+      // userInfo {useCache: false}
+      if (!userInfo || !userInfo.id) {
+        userInfo = yield call(queryCurrent);
+        console.log('response', userInfo);
+        localStorage.setItem('user_info', JSON.stringify(userInfo));
+      }
       yield put({
         type: 'saveCurrentUser',
-        payload: response,
+        payload: userInfo,
       });
     },
   },

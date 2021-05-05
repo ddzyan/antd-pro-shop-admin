@@ -24,6 +24,13 @@
             routes: [
               {
                 path: '/',
+                redirect: '/dashboard',
+              },
+              {
+                name: 'dashboard',
+                path: '/dashboard',
+                icon: 'PieChartOutlined',
+                component: '@/pages/DashBoard',
               },
               {
                 component: './404',

@@ -30,3 +30,12 @@ export function setAuthority(authority: string | string[]): void {
   // auto reload
   reloadAuthorized();
 }
+
+export function setAccessToken(accessToken: string): void {
+  localStorage.setItem('access_token', accessToken);
+}
+
+export function getAccessToken(): string {
+  const access_token = localStorage.getItem('access_token') || '';
+  return access_token;
+}

@@ -1,11 +1,10 @@
 import { stringify } from 'querystring';
 import type { Reducer, Effect } from 'umi';
 import { history } from 'umi';
-
-import { fakeAccountLogin } from '@/services/login';
-import { setAuthority } from '@/utils/authority';
-import { getPageQuery } from '@/utils/utils';
+import { fakeAccountLogin, logout } from '@/services/login';
+import { setAccessToken } from '@/utils/authority';
 import { message } from 'antd';
+// import { message } from 'antd';
 
 export type StateType = {
   status?: 'ok' | 'error';
@@ -28,19 +27,23 @@ export type LoginModelType = {
 const Model: LoginModelType = {
   namespace: 'login',
 
-  state: {
-    status: undefined,
-  },
+  state: {},
 
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: response,
-      });
+      console.log(response);
+      if (response.status === undefined) {
+        message.success('登录成功');
+        yield put({
+          type: 'changeLoginStatus',
+          payload: response,
+        });
+        history.replace('/');
+      }
+
       // Login successfully
-      if (response.status === 'ok') {
+      /* if (response.status === 'ok') {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         message.success('🎉 🎉 🎉  登录成功！');
@@ -61,30 +64,30 @@ const Model: LoginModelType = {
           }
         }
         history.replace(redirect || '/');
-      }
+      } */
     },
 
-    logout() {
-      const { redirect } = getPageQuery();
-      // Note: There may be security issues, please note
-      if (window.location.pathname !== '/user/login' && !redirect) {
-        history.replace({
-          pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
-        });
+    *logout(_, { call }) {
+      const load = message.loading('退出中...', 0);
+      const response = yield call(logout);
+
+      if (response.status === undefined) {
+        localStorage.removeItem('user_info');
+        localStorage.removeItem('access_token');
+        message.success('退出成功');
+        history.replace('/user/login');
       }
+
+      load();
     },
   },
 
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
+      // setAuthority(payload.currentAuthority);
+      setAccessToken(payload.access_token);
       return {
         ...state,
-        status: payload.status,
-        type: payload.type,
       };
     },
   },
