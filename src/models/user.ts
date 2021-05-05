@@ -51,12 +51,10 @@ const UserModel: UserModelType = {
     *fetchCurrent(_, { call, put }) {
       // 不存在则返回null
       let userInfo = JSON.parse(localStorage.getItem('user_info') as string);
-      console.log('userInfo', userInfo);
       // TODO 返回值错误，需要进行修改
       // userInfo {useCache: false}
       if (!userInfo || !userInfo.id) {
         userInfo = yield call(queryCurrent);
-        console.log('response', userInfo);
         localStorage.setItem('user_info', JSON.stringify(userInfo));
       }
       yield put({

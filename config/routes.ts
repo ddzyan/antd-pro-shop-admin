@@ -33,6 +33,12 @@
                 component: '@/pages/DashBoard',
               },
               {
+                name: 'userlist',
+                path: '/userlist',
+                icon: 'UserOutlined',
+                component: '@/pages/User/list',
+              },
+              {
                 component: './404',
               },
             ],
