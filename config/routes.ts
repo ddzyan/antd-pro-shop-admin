@@ -39,6 +39,12 @@
                 component: '@/pages/User/list',
               },
               {
+                name: 'goods',
+                path: '/goods',
+                icon: 'ShoppingOutlined',
+                component: '@/pages/Goods',
+              },
+              {
                 component: './404',
               },
             ],

@@ -1,5 +1,6 @@
 export default {
   'menu.welcome': '欢迎',
+  'menu.goods': '商品管理',
   'menu.userlist': '用户管理',
   'menu.more-blocks': '更多区块',
   'menu.home': '首页',
