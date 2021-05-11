@@ -7,6 +7,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { getGoods, setOn, setRecommend } from '@/services/goods';
 
 import CreateOrEdit from './components/CreateOrEdit';
+import CardList from './components/CardList';
 
 export interface UserListProps {}
 
@@ -107,7 +108,7 @@ const UserList: React.FC<UserListProps> = () => {
     {
       title: '操作',
       hideInSearch: true,
-      render: (_, record) => <a onClick={() => isShowModal(record.id)}>编辑</a>,
+      render: (_: any, record: any) => <a onClick={() => isShowModal(record.id)}>编辑</a>,
     },
   ];
 

@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react';
-import ProForm, {
-  ProFormText,
-  ProFormTextArea,
-  ProFormUploadButton,
-  ProFormDigit,
-} from '@ant-design/pro-form';
+import ProForm, { ProFormText, ProFormTextArea, ProFormDigit } from '@ant-design/pro-form';
 import { message, Modal, Skeleton, Cascader } from 'antd';
 import type { EditUser, CreateUser } from '@/services/user';
 import { editUser, createUser } from '@/services/user';
 import { getCategory } from '@/services/category';
+import AliyunOSSUpload from '@/components/AliyunOSSUpload';
 
 export interface EditProps {
   isModalVisible: boolean;
@@ -20,6 +16,7 @@ export interface EditProps {
 const Edit: React.FC<EditProps> = (props) => {
   const { isModalVisible, isShowModal, actionRef, uid } = props;
   const [options, setOptions] = useState([]);
+  const [fromObj] = ProForm.useForm(); // 定义form实例来操作表单
   const initUser;
   useEffect(async () => {
     const result = await getCategory();
@@ -44,6 +41,10 @@ const Edit: React.FC<EditProps> = (props) => {
     }
   };
 
+  const setCover = (fileKey) =>
+    fromObj.setFieldsValue({
+      cover: fileKey,
+    });
   return (
     <Modal
       title={`${type}商品`}
@@ -55,7 +56,11 @@ const Edit: React.FC<EditProps> = (props) => {
       {initUser === undefined && uid !== undefined ? (
         <Skeleton paragraph={{ rows: 4 }} active={true} />
       ) : (
-        <ProForm onFinish={(params: EditUser) => handlerSubmit(params)} initialValues={initUser}>
+        <ProForm
+          from={fromObj}
+          onFinish={(params: EditUser) => handlerSubmit(params)}
+          initialValues={initUser}
+        >
           <ProForm.Item
             name="category_id"
             label="分类"
@@ -119,17 +124,23 @@ const Edit: React.FC<EditProps> = (props) => {
               },
             ]}
           />
-          <ProFormUploadButton
-            label="上传图片"
-            name="upload"
-            action="upload.do"
+          <ProForm.Item
+            name="cover"
+            label="商品主图"
             rules={[
               {
                 required: true,
-                message: '请选择商品底图',
+                message: '请上传商品主图',
               },
             ]}
-          />
+          >
+            <div>
+              <AliyunOSSUpload setCover={setCover} accept="image/*">
+                上传商品主图
+              </AliyunOSSUpload>
+            </div>
+          </ProForm.Item>
+
           <ProFormTextArea
             name="details"
             label="详情"

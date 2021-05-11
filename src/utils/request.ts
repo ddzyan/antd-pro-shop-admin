@@ -2,6 +2,7 @@
 import { extend } from 'umi-request';
 import { getAccessToken } from './authority';
 import { message } from 'antd';
+import { history } from 'umi';
 
 const codeMessage: Record<number, string> = {
   200: '服务器成功返回请求的数据。',
@@ -43,6 +44,13 @@ const errorHandler = async (error: { response: Response }): Promise<Response> =>
 
     if (status === 400) {
       errorText += `[${result.message}]`;
+      localStorage.removeItem('user_info');
+      localStorage.removeItem('access_token');
+    }
+
+    if (status === 401) {
+      errorText += `[${result.message}]`;
+      history.replace('/user/login');
     }
 
     message.error(errorText);
