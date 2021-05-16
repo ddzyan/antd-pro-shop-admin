@@ -44,11 +44,12 @@ const errorHandler = async (error: { response: Response }): Promise<Response> =>
 
     if (status === 400) {
       errorText += `[${result.message}]`;
-      localStorage.removeItem('user_info');
-      localStorage.removeItem('access_token');
     }
 
+    // 用户 token 过期则删除缓存
     if (status === 401) {
+      localStorage.removeItem('user_info');
+      localStorage.removeItem('access_token');
       errorText += `[${result.message}]`;
       history.replace('/user/login');
     }

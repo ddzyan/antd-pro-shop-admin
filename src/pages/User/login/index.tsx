@@ -19,7 +19,8 @@ export type LoginProps = {
 const Login: React.FC<LoginProps> = (props) => {
   useEffect(() => {
     const userInfo: any = localStorage.getItem('user_info');
-    if (userInfo && userInfo.id) history.replace('/');
+    console.log(userInfo);
+    if (userInfo) history.replace('/');
   }, []);
   const { submitting } = props;
 

@@ -53,7 +53,7 @@ const UserModel: UserModelType = {
       let userInfo = JSON.parse(localStorage.getItem('user_info') as string);
       // TODO 返回值错误，需要进行修改
       // userInfo {useCache: false}
-      if (!userInfo || !userInfo.id) {
+      if (userInfo.id !== undefined) {
         userInfo = yield call(queryCurrent);
         localStorage.setItem('user_info', JSON.stringify(userInfo));
       }
