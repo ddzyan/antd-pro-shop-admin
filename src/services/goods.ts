@@ -1,63 +1,54 @@
 import request from '@/utils/request';
 
-export interface CreateUser {
-  name: string;
-  email: string;
-  password: string;
+export interface CreateGoods {
+  category_id: number;
+  title: string;
+  cover: string;
+  description: string;
+  details: string;
+  price: number;
+  stock: number;
 }
 
-export interface CreateOrEditUser {
-  id?: number;
-  name: string;
-  email: string;
-  password?: string;
+export interface UpdateGoods {
+  title: string;
+  cover: string;
+  description: string;
+  details: string;
+  price: number;
+  stock: number;
 }
 
-export interface EditUser {
-  name: string;
-  email: string;
-}
-
-export async function query(): Promise<any> {
-  return request('/api/users');
-}
-
-export async function queryCurrent(): Promise<any> {
-  return request('/admin/user');
-}
-
-export async function queryNotices(): Promise<any> {
-  return request('/api/notices');
-}
-
+// 获得商品列表
 export async function getGoods(params: any): Promise<any> {
   return request('/admin/goods', { params });
 }
 
+// 设置上架
 export async function setOn(goodId: number) {
   return request.patch(`/admin/goods/${goodId}/on`);
 }
 
+// 设置推荐
 export async function setRecommend(goodId: number) {
   return request.patch(`/admin/goods/${goodId}/recommend`);
 }
 
-export async function createUser(data: CreateUser) {
-  return request.post('/admin/users', {
+// 创建商品
+export async function createGood(data: CreateGoods) {
+  return request.post('/admin/goods', {
     data,
   });
 }
 
-export async function getUser(uid: number) {
-  return request(`/admin/users/${uid}`);
+// 获取指定商品
+export async function getGood(goodId: number) {
+  return request(`/admin/goods/${goodId}?include=category`);
 }
 
-export async function editUser(uid: number, data: EditUser) {
-  const { name, email } = data;
-  return request.put(`/admin/users/${uid}`, {
-    data: {
-      name,
-      email,
-    },
+// 修改商品
+export async function updateGood(goodId: number, data: UpdateGoods) {
+  return request.put(`/admin/goods/${goodId}`, {
+    data,
   });
 }

@@ -7,14 +7,13 @@ import { PlusOutlined } from '@ant-design/icons';
 import { getGoods, setOn, setRecommend } from '@/services/goods';
 
 import CreateOrEdit from './components/CreateOrEdit';
-import CardList from './components/CardList';
 
 export interface UserListProps {}
 
 const UserList: React.FC<UserListProps> = () => {
   const actionRef = useRef<ActionType>();
   const [isModalVisible, setModalVisible] = useState(false);
-  const [editUserId, setEditUserId] = useState(undefined);
+  const [editGoodId, setEditGoodId]: [number | undefined, Function] = useState(undefined);
 
   const getData = async (params: any) => {
     const result = await getGoods(params);
@@ -35,8 +34,8 @@ const UserList: React.FC<UserListProps> = () => {
     if (result.status === undefined) message.success('更新成功');
   };
 
-  const isShowModal = (uid = undefined) => {
-    setEditUserId(uid);
+  const isShowModal = (goodId: number | undefined = undefined) => {
+    setEditGoodId(goodId);
     setModalVisible(!isModalVisible);
   };
 
@@ -139,7 +138,7 @@ const UserList: React.FC<UserListProps> = () => {
         <CreateOrEdit
           isModalVisible={isModalVisible}
           isShowModal={isShowModal}
-          uid={editUserId}
+          editGoodId={editGoodId}
           actionRef={actionRef}
         />
       )}

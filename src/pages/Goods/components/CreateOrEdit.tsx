@@ -1,39 +1,60 @@
 import { useEffect, useState } from 'react';
 import ProForm, { ProFormText, ProFormTextArea, ProFormDigit } from '@ant-design/pro-form';
-import { message, Modal, Skeleton, Cascader } from 'antd';
-import type { EditUser, CreateUser } from '@/services/user';
-import { editUser, createUser } from '@/services/user';
+import { message, Modal, Skeleton, Cascader, Button, Image } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+
+import type { CreateGoods } from '@/services/goods';
+import { createGood, getGood, updateGood } from '@/services/goods';
 import { getCategory } from '@/services/category';
 import AliyunOSSUpload from '@/components/AliyunOSSUpload';
+import Editor from '@/components/Editor';
 
 export interface EditProps {
   isModalVisible: boolean;
   isShowModal: any;
-  uid: number | undefined;
+  editGoodId: number | undefined;
   actionRef: any;
 }
 
 const Edit: React.FC<EditProps> = (props) => {
-  const { isModalVisible, isShowModal, actionRef, uid } = props;
+  const { isModalVisible, isShowModal, actionRef, editGoodId } = props;
+  const [initGood, setInitGood]: [any, Function] = useState(undefined);
   const [options, setOptions] = useState([]);
-  const [fromObj] = ProForm.useForm(); // 定义form实例来操作表单
-  const initUser;
-  useEffect(async () => {
-    const result = await getCategory();
-    if (result.status === undefined) {
-      setOptions(result);
+  const [formObj] = ProForm.useForm(); // 定义form实例来操作表单
+
+  useEffect(() => {
+    const getCategoryRes = async () => {
+      const result = await getCategory();
+      if (result.status === undefined) {
+        setOptions(result);
+      }
+    };
+
+    const getGoodRes = async () => {
+      const result = await getGood(editGoodId as number);
+      if (result.status === undefined) {
+        const { pid, id } = result.category;
+        const defaultCategory = pid ? [pid, id] : [id];
+        setInitGood({ ...result, category_id: defaultCategory });
+      }
+    };
+    if (editGoodId) {
+      getGoodRes();
     }
+
+    getCategoryRes();
   }, []);
 
-  const type = uid ? '编辑' : '添加';
+  const type = editGoodId ? '编辑' : '添加';
 
-  const handlerSubmit = async (params: EditUser & CreateUser) => {
+  const handlerSubmit = async (params: CreateGoods) => {
     let res;
-    if (uid) {
-      res = await editUser(uid, params);
+    if (editGoodId) {
+      res = await updateGood(editGoodId, { ...params, category_id: params.category_id[1] });
     } else {
-      res = await createUser(params);
+      res = await createGood({ ...params, category_id: params.category_id[1] });
     }
+
     if (res.status === undefined) {
       message.success(`${type}成功`);
       actionRef.current.reload();
@@ -42,9 +63,17 @@ const Edit: React.FC<EditProps> = (props) => {
   };
 
   const setCover = (fileKey) =>
-    fromObj.setFieldsValue({
+    formObj.setFieldsValue({
       cover: fileKey,
     });
+
+  // 通过 props 传递给子属性，用于表单项的赋值
+  const setDetails = (content) => {
+    return formObj.setFieldsValue({
+      details: content,
+    });
+  };
+
   return (
     <Modal
       title={`${type}商品`}
@@ -53,13 +82,13 @@ const Edit: React.FC<EditProps> = (props) => {
       destroyOnClose={true}
       onCancel={() => isShowModal()}
     >
-      {initUser === undefined && uid !== undefined ? (
+      {initGood === undefined && editGoodId !== undefined ? (
         <Skeleton paragraph={{ rows: 4 }} active={true} />
       ) : (
         <ProForm
-          from={fromObj}
-          onFinish={(params: EditUser) => handlerSubmit(params)}
-          initialValues={initUser}
+          form={formObj}
+          onFinish={(params) => handlerSubmit(params)}
+          initialValues={initGood}
         >
           <ProForm.Item
             name="category_id"
@@ -77,7 +106,6 @@ const Edit: React.FC<EditProps> = (props) => {
               fieldNames={{ label: 'name', value: 'id' }}
             />
           </ProForm.Item>
-
           <ProFormText
             name="title"
             label="商品名"
@@ -124,6 +152,7 @@ const Edit: React.FC<EditProps> = (props) => {
               },
             ]}
           />
+          <ProFormText hidden={true} name="cover" />
           <ProForm.Item
             name="cover"
             label="商品主图"
@@ -136,22 +165,30 @@ const Edit: React.FC<EditProps> = (props) => {
           >
             <div>
               <AliyunOSSUpload setCover={setCover} accept="image/*">
-                上传商品主图
+                <Button icon={<UploadOutlined />}>上传商品主图</Button>
               </AliyunOSSUpload>
+              {initGood === undefined || !initGood.cover_url ? (
+                ''
+              ) : (
+                <Image src={initGood.cover_url} width={200} />
+              )}
             </div>
           </ProForm.Item>
-
-          <ProFormTextArea
+          <ProForm.Item
             name="details"
-            label="详情"
-            placeholder="请输入详情"
+            label="商品详情"
             rules={[
               {
                 required: true,
-                message: '请输入详情',
+                message: '请输入商品详情',
               },
             ]}
-          />
+          >
+            <Editor
+              content={initGood === undefined ? '' : initGood.details}
+              setDetails={setDetails}
+            />
+          </ProForm.Item>
         </ProForm>
       )}
     </Modal>

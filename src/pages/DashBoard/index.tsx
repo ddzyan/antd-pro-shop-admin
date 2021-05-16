@@ -12,9 +12,12 @@ const DashBoard: React.FC<DashBoardProps> = () => {
     users_count: 0,
   });
 
-  useEffect(async () => {
-    const res = await getDashBoard();
-    setCountList(res);
+  useEffect(() => {
+    const getData = async () => {
+      const res = await getDashBoard();
+      setCountList(res);
+    };
+    getData();
   }, []);
 
   return (

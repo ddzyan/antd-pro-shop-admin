@@ -1,6 +1,6 @@
 import React from 'react';
-import { Upload, message, Button } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Upload, message } from 'antd';
+
 import { ossConfig } from '@/services/common';
 
 // https://laravel-book-shop.oss-cn-beijing.aliyuncs.com/
@@ -31,9 +31,10 @@ class AliyunOSSUpload extends React.Component {
     if (onChange) {
       onChange([...fileList]);
     } */
-    const { fromObj } = this.props;
+    const { setCover, setUploadUrl } = this.props;
     if (file.status === 'done') {
-      this.props.setCover(file.key);
+      if (setCover) setCover(file.key);
+      if (setUploadUrl) setUploadUrl(file.url);
       message.success('上传完成');
     }
   };
@@ -76,8 +77,9 @@ class AliyunOSSUpload extends React.Component {
   };
 
   render() {
-    const { value, accept = '' } = this.props;
+    const { value, accept = '', showUploadList = true } = this.props;
     const props = {
+      showUploadList,
       accept,
       maxCount: 1,
       listType: 'picture',
@@ -85,15 +87,11 @@ class AliyunOSSUpload extends React.Component {
       fileList: value,
       action: this.state.OSSData.host,
       onChange: this.onChange,
-      // onRemove: this.onRemove,
+      onRemove: this.onRemove,
       data: this.getExtraData,
       beforeUpload: this.beforeUpload,
     };
-    return (
-      <Upload {...props}>
-        <Button icon={<UploadOutlined />}>{this.props.children}</Button>
-      </Upload>
-    );
+    return <Upload {...props}>{this.props.children}</Upload>;
   }
 }
 

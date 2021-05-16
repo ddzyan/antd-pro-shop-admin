@@ -84,18 +84,6 @@ const UserList: React.FC<UserListProps> = () => {
         search={{
           labelWidth: 'auto',
         }}
-        /*  form={{
-          // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-          syncToUrl: (values, type) => {
-            if (type === 'get') {
-              return {
-                ...values,
-                created_at: [values.startTime, values.endTime],
-              };
-            }
-            return values;
-          },
-        }} */
         pagination={{
           pageSize: 10,
         }}

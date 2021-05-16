@@ -16,14 +16,16 @@ const Edit: React.FC<EditProps> = (props) => {
 
   const [initUser, setInitUser] = useState(undefined);
 
-  useEffect(async () => {
-    const result = await getUser(uid);
-    const { name, email } = result;
-    setInitUser({
-      name,
-      email,
-    });
-    console.log(result);
+  useEffect(() => {
+    const getUserRes = async () => {
+      const result = await getUser(uid);
+      const { name, email } = result;
+      setInitUser({
+        name,
+        email,
+      });
+    };
+    getUserRes();
   }, []);
 
   const editUserHandler = async (params: EditUser) => {
