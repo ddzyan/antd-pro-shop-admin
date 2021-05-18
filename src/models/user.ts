@@ -1,5 +1,6 @@
 import type { Effect, Reducer } from 'umi';
 
+import { setUser, getUser } from '@/utils/localStorage';
 import { queryCurrent, query as queryUsers } from '@/services/user';
 
 export type CurrentUser = {
@@ -49,13 +50,11 @@ const UserModel: UserModelType = {
       });
     },
     *fetchCurrent(_, { call, put }) {
-      // 不存在则返回null
-      let userInfo = JSON.parse(localStorage.getItem('user_info') as string);
-      // TODO 返回值错误，需要进行修改
-      // userInfo {useCache: false}
-      if (userInfo.id !== undefined) {
+      let userInfo = getUser();
+      // 用户信息不存在，则调用接口获取用户信息并且进行保存
+      if (userInfo.id === undefined) {
         userInfo = yield call(queryCurrent);
-        localStorage.setItem('user_info', JSON.stringify(userInfo));
+        setUser(userInfo);
       }
       yield put({
         type: 'saveCurrentUser',

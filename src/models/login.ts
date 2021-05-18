@@ -1,10 +1,8 @@
-import { stringify } from 'querystring';
 import type { Reducer, Effect } from 'umi';
 import { history } from 'umi';
 import { fakeAccountLogin, logout } from '@/services/login';
 import { setAccessToken } from '@/utils/authority';
 import { message } from 'antd';
-// import { message } from 'antd';
 
 export type StateType = {
   status?: 'ok' | 'error';
@@ -32,7 +30,6 @@ const Model: LoginModelType = {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
-      console.log(response);
       if (response.status === undefined) {
         message.success('登录成功');
         yield put({

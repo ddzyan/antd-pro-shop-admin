@@ -7,7 +7,7 @@ import type { Dispatch } from 'umi';
 import type { StateType } from '@/models/login';
 import type { LoginParamsType } from '@/services/login';
 import type { ConnectState } from '@/models/connect';
-
+import { getUser } from '@/utils/localStorage';
 import styles from './index.less';
 
 export type LoginProps = {
@@ -18,9 +18,8 @@ export type LoginProps = {
 
 const Login: React.FC<LoginProps> = (props) => {
   useEffect(() => {
-    const userInfo: any = localStorage.getItem('user_info');
-    console.log(userInfo);
-    if (userInfo) history.replace('/');
+    const userInfo = getUser();
+    if (userInfo.id) history.replace('/');
   }, []);
   const { submitting } = props;
 
