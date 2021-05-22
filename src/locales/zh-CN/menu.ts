@@ -1,4 +1,5 @@
 export default {
+  'menu.category': '菜单管理',
   'menu.welcome': '欢迎',
   'menu.goods': '商品管理',
   'menu.userlist': '用户管理',

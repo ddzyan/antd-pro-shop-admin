@@ -45,6 +45,12 @@
                 component: '@/pages/Goods',
               },
               {
+                name: 'category',
+                path: '/category',
+                icon: 'ShoppingOutlined',
+                component: '@/pages/Category',
+              },
+              {
                 component: './404',
               },
             ],
