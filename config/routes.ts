@@ -51,6 +51,12 @@
                 component: '@/pages/Category',
               },
               {
+                name: 'order',
+                path: '/order',
+                icon: 'UnorderedListOutlined',
+                component: '@/pages/Order',
+              },
+              {
                 component: './404',
               },
             ],
