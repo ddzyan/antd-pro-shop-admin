@@ -170,7 +170,11 @@ const Edit: React.FC<EditProps> = (props) => {
               {initGood === undefined || !initGood.cover_url ? (
                 ''
               ) : (
-                <Image src={initGood.cover_url} width={200} />
+                <div style={{ marginTop: 20 }}>
+                  当前图片:
+                  <br />
+                  <Image src={initGood.cover_url} width={200} />
+                </div>
               )}
             </div>
           </ProForm.Item>

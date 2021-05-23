@@ -1,4 +1,5 @@
 export default {
+  'menu.slide': '轮播图管理',
   'menu.category': '菜单管理',
   'menu.order': '订单管理',
   'menu.welcome': '欢迎',
