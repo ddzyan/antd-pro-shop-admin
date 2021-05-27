@@ -10,6 +10,22 @@ umi 包含：
 - proComponent
 - 等一系列插件
 
+## 操作
+
+本地运行
+
+```
+yarn
+
+yarn start
+```
+
+打包，产生静态文件
+
+```
+yarn run build
+```
+
 ### 记录
 
 创建项目
