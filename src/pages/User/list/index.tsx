@@ -11,11 +11,17 @@ import CreateOrEdit from './components/CreateOrEdit';
 export interface UserListProps {}
 
 const UserList: React.FC<UserListProps> = () => {
+  // 可以用来管理 DOM的Ref
+  // 每次渲染都返回相同变量的引用
   const actionRef = useRef<ActionType>();
+  // 使用 useState 方法 声明一个 state 属性，并且将属性赋值给 isModalVisible , setModalVisible 是修改属性的方法，掺入方法的 false 是这个属性的初始值
   const [isModalVisible, setModalVisible] = useState(false);
   const [editUserId, setEditUserId] = useState(undefined);
 
-  const getData = async (params: any) => {
+  const getData = async (params: {
+    current: number;
+    pageSize: number;
+  }): Promise<{ data: any[]; success: boolean; total: number }> => {
     const result = await getUserList(params);
     return {
       data: result.data,
@@ -24,7 +30,8 @@ const UserList: React.FC<UserListProps> = () => {
     };
   };
 
-  const changeLock = async (uid: number) => {
+  // Switch 组件 转换时间监听
+  const changeHandler = async (uid: number) => {
     const result = await setLock(uid);
     if (result.status === undefined) message.success('更新成功');
   };
@@ -39,7 +46,7 @@ const UserList: React.FC<UserListProps> = () => {
       title: '头像',
       dataIndex: 'avatar_url',
       hideInSearch: true,
-      render: (_, record) => <Avatar src={record.avatar_url} icon={<UserOutlined />} />,
+      render: (_: any, record: any) => <Avatar src={record.avatar_url} icon={<UserOutlined />} />,
     },
     {
       title: '姓名',
@@ -51,13 +58,13 @@ const UserList: React.FC<UserListProps> = () => {
     },
     {
       title: '是否禁用',
-      dataIndex: 'is_locked',
-      hideInSearch: true,
-      render: (_, record) => (
+      dataIndex: 'is_locked', // 匹配的字段
+      hideInSearch: true, // 关闭搜索，默认开启
+      render: (_: any, record: any) => (
         <Switch
           checkedChildren="启用"
           unCheckedChildren="禁用"
-          onChange={() => changeLock(record.id)}
+          onChange={() => changeHandler(record.id)}
           defaultChecked={record.is_locked === 0}
         />
       ),
@@ -70,7 +77,7 @@ const UserList: React.FC<UserListProps> = () => {
     {
       title: '操作',
       hideInSearch: true,
-      render: (_, record) => <a onClick={() => isShowModal(record.id)}>编辑</a>,
+      render: (_: any, record: any) => <a onClick={() => isShowModal(record.id)}>编辑</a>, // 如果返回的是数组，这里要写个key
     },
   ];
 
@@ -79,8 +86,8 @@ const UserList: React.FC<UserListProps> = () => {
       <ProTable
         columns={columns}
         actionRef={actionRef}
-        request={async (params = {}) => getData(params)}
-        rowKey="id"
+        request={getData}
+        rowKey="id" // 要用唯一返回值
         search={{
           labelWidth: 'auto',
         }}

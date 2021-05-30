@@ -14,7 +14,8 @@ export interface EditProps {
 
 const Edit: React.FC<EditProps> = (props) => {
   const { isModalVisible, isShowModal, actionRef, editSlideObj } = props;
-  const [formObj] = ProForm.useForm(); // 定义form实例来操作表单
+  // 定义form实例来操作表单
+  const [formObj] = ProForm.useForm();
   const type = editSlideObj.id ? '编辑' : '添加';
 
   const handlerSubmit = async (params: any) => {
@@ -44,10 +45,10 @@ const Edit: React.FC<EditProps> = (props) => {
   return (
     <Modal
       title={`${type}商品`}
-      footer={null}
+      footer={null} // 去除底部按钮
       visible={isModalVisible}
-      destroyOnClose={true}
-      onCancel={() => isShowModal()}
+      destroyOnClose={true} // 关闭则销毁组件
+      onCancel={isShowModal}
     >
       <ProForm
         form={formObj}

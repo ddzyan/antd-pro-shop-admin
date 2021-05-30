@@ -19,6 +19,7 @@ interface ActionType {
 }
 
 const Slide: React.FC<SlideProps> = () => {
+  // useRef 返回一个 可变的ref 对象，可以将这个对象赋值给组件ref属性，则.current就指向这个组件的DOM
   const actionRef = useRef<ActionType>();
   const [isModalVisible, setModalVisible] = useState(false);
   const [editSlide, setEditSlide] = useState({});
@@ -30,17 +31,16 @@ const Slide: React.FC<SlideProps> = () => {
     }
   };
 
-  const getData = async (params: any): Promise<any> => {
+  const getData = async (params: {
+    current: number;
+    pageSize: number;
+  }): Promise<{ data: any[]; success: boolean; total: number }> => {
     const result = await getSlides(params);
-    if (result.status === undefined) {
-      return {
-        data: result.data,
-        success: true,
-        total: result.meta.pagination.total,
-      };
-    }
-
-    return {};
+    return {
+      data: result.data,
+      success: true,
+      total: result.meta.pagination.total,
+    };
   };
 
   const isShowModal = (slide = {}): void => {
@@ -52,7 +52,7 @@ const Slide: React.FC<SlideProps> = () => {
     const res = await delSlides(slideId);
     if (res.status === undefined) {
       message.success('删除成功');
-      actionRef.current?.reload();
+      actionRef.current?.reload(); // 重新加载表格
     }
   };
 
@@ -60,7 +60,7 @@ const Slide: React.FC<SlideProps> = () => {
     {
       title: '轮播图片',
       width: 150,
-      render: (_, record) => <Image src={record.img_url} />,
+      render: (_: any, record: any) => <Image src={record.img_url} />,
     },
     {
       title: '标题',
@@ -73,7 +73,7 @@ const Slide: React.FC<SlideProps> = () => {
     {
       title: '是否禁用',
       dataIndex: 'status',
-      render: (_, record: any) => (
+      render: (_: any, record: any) => (
         <Switch
           checkedChildren="开启"
           unCheckedChildren="关闭"
@@ -113,7 +113,7 @@ const Slide: React.FC<SlideProps> = () => {
         search={false}
         columns={columns}
         actionRef={actionRef}
-        request={async (params = {}) => getData(params)}
+        request={getData}
         rowKey="id"
         pagination={{
           pageSize: 10,
